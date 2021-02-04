@@ -9,7 +9,7 @@ from ml2_python.field import Field
 from ml2_python.python import Python
 
 import collections.abc as cabc
-
+import copy
 
 class Action:
     IDLE = 0
@@ -53,7 +53,7 @@ class ML2Python(gym.Env):
 
         self.field = Field(init_map, players)
         self.num_players = len(self.field.players)
-        self.playerpos = players
+        self.playerpos = copy.deepcopy(players)
         self.visits = np.zeros((self.num_players, np.prod(self.field.size)))
 
         self.num_fruits = num_fruits
@@ -87,7 +87,16 @@ class ML2Python(gym.Env):
                        random.choice(Direction.DIRECTIONLIST), 3)
             ]
         else:
-            players = self.playerpos
+            # TODO(jjma): Figure some better way to randomly generate properly.
+            players = [
+                Python(Point(3, 3), Direction.EAST, 3),
+                Python(Point(16, 3), Direction.SOUTH, 3),
+                Python(Point(16, 16), Direction.WEST, 3),
+                Python(Point(3, 16), Direction.NORTH, 3)
+            ]
+            
+            players = copy.deepcopy(self.playerpos)
+            
         self.field = Field(self.init_map, players)
 
         # Initialize dones and infos
